@@ -1,0 +1,19 @@
+{
+  "name": "mongo-todo-api",
+  "version": "1.0.0",
+  "description": "Simple Node ToDo API with mongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "keywords": [
+    "ToDo-App",
+    "REST-API",
+    "MongoDB"
+  ],
+  "author": "Developerk",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^2.2.5"
+  }
+}
