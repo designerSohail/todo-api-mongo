@@ -3,9 +3,23 @@ const request = require('supertest')
 
 const {app} = require('./../server')
 const {Todo} = require('./../models/todo')
+
+var todos = [
+	{
+		name: "Go to School"
+	},{
+		name: "connfigure github repo"
+	}
+]
+
 beforeEach(done => {
-	Todo.remove({}).then(() => done())
+	Todo.remove({}).then(() => {
+		Todo.insertMany(todos)
+	}).then(() => {
+		done();
+	})
 })
+
 describe('POST /Todos', () => {
 	it('should create a new todo', done => {
 		var name = 'Test Todo Test'
@@ -19,8 +33,8 @@ describe('POST /Todos', () => {
 			.end((err, res) => {
 				if (err) return done(err)
 				Todo.find().then(todos => {
-					expect(todos.length).toBe(1)
-					expect(todos[0].name).toBe(name)
+					expect(todos.length).toBe(3)
+					expect(todos[2].name).toBe(name)
 					done()
 				}).catch(e => done(e))
 			})
@@ -34,9 +48,21 @@ describe('POST /Todos', () => {
 			.end((err, res) => {
 				if (err) return done(err)
 				Todo.find().then(todos => {	
-					expect(todos.length).toBe(0)
+					expect(todos.length).toBe(2)
 					done()
 				}).catch(e => done(e))
 			})
+	})
+})
+
+describe('GET /todos', () => {
+	it('should get all todos', done => {
+		request(app)
+			.get('/todos')
+			.expect(200)
+			.expect(res => {
+				expect(res.body.length).toBe(2)
+			})
+			.end(done)
 	})
 })
