@@ -25,6 +25,7 @@ app.post('/todos', (req, res) => {
 app.listen(3000, () => {
 	log('Server is running.')
 })
-function log(str, arg = null) {
+module.exports = {app}
+function log(str, arg = "") {
 	console.log(str, arg)
 }
