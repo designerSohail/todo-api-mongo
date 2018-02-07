@@ -3,11 +3,14 @@ const request = require('supertest')
 
 const {app} = require('./../server')
 const {Todo} = require('./../models/todo')
+const {ObjectID} = require('mongodb')
 
 var todos = [
 	{
+		_id: new ObjectID()
 		name: "Go to School"
 	},{
+		_id: new ObjectID()
 		name: "connfigure github repo"
 	}
 ]
@@ -64,5 +67,30 @@ describe('GET /todos', () => {
 				expect(res.body.length).toBe(2)
 			})
 			.end(done)
+	})
+})
+
+describe('GET /todos/id', () => {
+	it('shoud return respective todo with id', done => {
+		request(app)
+			.get('/todos/' + todos[0]._id.toHexString())
+			.expect(200)
+			.expect(res => {
+				expect(res.body.todo.text).toBe(todos[0].text)
+			})
+			.end(done)
+	})
+	it('should not return todo by invalid id', done => {
+		request(app)
+			.get('/todos/123')
+			.expect(404)
+			.end(done)
+	})
+	it('should not return 404 if not found', done => {
+		const hexId = new ObjectID().toHexString()
+		request(app)
+			.get('/todos/' + hexId)
+			.expect(404)
+			.end()
 	})
 })
