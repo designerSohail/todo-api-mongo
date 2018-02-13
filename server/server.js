@@ -48,14 +48,14 @@ app.get('/todos/:id', (req, res) => {
 
 app.delete('/todos/:id', (req, res) => {
 	const id = req.params.id
-	if (Object.isValid(id)) return res.status(404).send('Todo couldnot be removed due to wrong id format!')
+	if (!ObjectID.isValid(id)) return res.status(404).send('Todo couldnot be removed due to wrong id format!')
 	Todo.findByIdAndRemove(id).then(doc => {
-		if (!todo) return res.status(404).send('Todo not found!')
-		res.send({todo})
+		if (!doc) return res.status(404).send('Todo not found!')
+		res.send({doc})
 	}, err => {
 		log('Unable to remove todo', err)
 	}).catch(err => {
-		res.status(400).send()
+		res.status(400).send('Bad Request' + err)
 	})
 })
 
