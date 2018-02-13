@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const _ = require('lodash')
 
 const {mongoose} = require('./db/mongoose')
 const {User} = require('./models/user')
@@ -57,6 +58,26 @@ app.delete('/todos/:id', (req, res) => {
 	}).catch(err => {
 		res.status(400).send('Bad Request' + err)
 	})
+})
+
+app.patch('/todos/:id', (req, res) => {
+	const id = req.params.id
+	var body = _.pick(res.body, ['name', 'completed'])
+	if (!ObjectID.isValid(id)) return res.status(404).send('Invalid id format')
+	if (_.isBoolean(body.completed) && body.completed) {
+	  body.completedAt = new Date().getTime()
+	} else {
+	  body.completed = false
+		body.completedAt = null
+	}
+	Todo.findByIdAndUpdate(id, {
+		$set: body
+	}, {
+		returnOriginal: false
+	}).then(doc => {
+		if (!doc) res.status(404).send('Todo not found!')
+		res.status(200).send({doc})
+	}).catch(err => res.status(400).send('An error occured' + err))
 })
 
 app.listen(port, () => {
