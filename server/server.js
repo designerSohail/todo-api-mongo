@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const {mongoose} = require('./db/mongoose')
 const {User} = require('./models/user')
 const {Todo} = require('./models/todo')
-const {ObjectID} = require('mongodb') 
+const {ObjectID} = require('mongodb')
 const port = process.env.PORT || 3000
 const app = express()
 
@@ -43,6 +43,19 @@ app.get('/todos/:id', (req, res) => {
 		}).catch(e => {
 			res.status(400).send()
 		})
+	})
+})
+
+app.delete('/todos/:id', (req, res) => {
+	const id = req.params.id
+	if (Object.isValid(id)) return res.status(404).send('Todo couldnot be removed due to wrong id format!')
+	Todo.findByIdAndRemove(id).then(doc => {
+		if (!todo) return res.status(404).send('Todo not found!')
+		res.send({todo})
+	}, err => {
+		log('Unable to remove todo', err)
+	}).catch(err => {
+		res.status(400).send()
 	})
 })
 
